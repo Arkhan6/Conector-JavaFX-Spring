@@ -34,6 +34,9 @@ public class UserService {
     }
 
     public User register(String username, String password) {
+        if (userRepository.existsByUsername(username)) {
+            throw new RuntimeException("El nombre de usuario ya existe");
+        }
         User user = new User();
         user.setUsername(username);
         user.setPassword(password);
