@@ -15,23 +15,29 @@ public class UserService {
 
 
     public User create(User user) {
-        user.setPswd(BCrypt.hashpw(user.getPswd(), BCrypt.gensalt()));
+        user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
         return userRepository.save(user);
     }
 
-
     public User login(String username, String password) {
-        if (!userRepository.existsById(username)) {
+        if (!userRepository.existsByUsername(username)) {
             throw new RuntimeException("No existe el usuario");
         }
 
-        User user = userRepository.getOne(username);
+        User user = userRepository.findByUsername(username);
 
-        if (BCrypt.checkpw(password, user.getPswd())) {
+        if (BCrypt.checkpw(password, user.getPassword())) {
             return user;
         } else {
             throw new RuntimeException("Password no valido");
         }
+    }
+
+    public User register(String username, String password) {
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(password);
+        return create(user);
     }
 
 }
